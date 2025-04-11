@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>𝐂𝐏𝐗 𝐏𝐑𝐈𝐌𝐄 𝐕𝐈𝐃𝐄𝐎𝐒</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: black;
+      color: white;
+      overflow-y: auto;
+    }
+    #loginPage, #homePage {
+      display: none;
+      text-align: center;
+      padding-top: 100px;
+    }
+    #loginPage.active, #homePage.active {
+      display: block;
+    }
+    h1 {
+      color: red;
+      text-shadow: 0 0 15px red;
+      font-size: 36px;
+    }
+    input[type="text"], input[type="password"] {
+      padding: 10px;
+      margin: 10px;
+      width: 250px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: none;
+    }
+    button {
+      padding: 12px 25px;
+      font-size: 16px;
+      margin: 10px;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+    }
+    #loginBtn {
+      background-color: red;
+      color: white;
+      width: 200px;
+    }
+    #menuBtn {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      font-size: 24px;
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+    }
+    #menuPopup {
+      display: none;
+      position: fixed;
+      top: 50px;
+      left: 10px;
+      background: rgba(20, 20, 20, 0.95);
+      padding: 20px;
+      border-radius: 10px;
+      width: 280px;
+      z-index: 1000;
+    }
+    #menuPopup button {
+      display: block;
+      width: 100%;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 18px;
+      text-align: left;
+      margin-bottom: 10px;
+    }
+    .divider {
+      border-bottom: 1px solid white;
+      margin: 10px 0;
+    }
+    .special-btn {
+      color: red;
+      font-weight: bold;
+    }
+    #uploadArea {
+      margin-top: 60px;
+    }
+    #fileInput {
+      background-color: #8B0000;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      color: white;
+    }
+    #uploadBtn {
+      background-color: #8B0000;
+      color: white;
+      margin-left: 10px;
+    }
+    .popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #222;
+      border: 2px solid red;
+      border-radius: 10px;
+      padding: 30px;
+      display: none;
+      z-index: 9999;
+      width: 300px;
+    }
+    .popup input {
+      width: 90%;
+    }
+    .popup h2 {
+      margin-top: 0;
+    }
+    .popup button {
+      width: 45%;
+    }
+    .success-animation {
+      animation: successFade 1s ease-out;
+    }
+    @keyframes successFade {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    #userList, #adminList {
+      text-align: left;
+    }
+    .logoutBtn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: red;
+      color: white;
+      border-radius: 6px;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div id="loginPage" class="active">
+    <h1>𝐂𝐏𝐗 𝐏𝐑𝐈𝐌𝐄 𝐕𝐈𝐃𝐄𝐎𝐒</h1>
+    <input type="text" id="username" placeholder="Username" /><br />
+    <input type="password" id="password" placeholder="Password" /><br />
+    <button id="loginBtn" onclick="login()">Login</button>
+  </div>
+  <button id="menuBtn" onclick="toggleMenu()">⋮</button>
+  <div id="menuPopup">
+    <button class="special-btn" onclick="showPopup('addUserPopup')">ADD USER</button>
+    <button class="special-btn" onclick="showPopup('addAdminPopup')">ADD ADMIN</button>
+    <div class="divider"></div>
+    <button onclick="showPopup('checkUsersPopup')">CHECK USERS</button>
+    <button onclick="showPopup('checkAdminsPopup')">CHECK ADMINS</button>
+    <div class="divider"></div>
+    <button onclick="logout()">LOGOUT</button>
+  </div>
+  <div id="homePage">
+    <h1>𝐂𝐏𝐗 𝐏𝐑𝐈𝐌𝐄 𝐕𝐈𝐃𝐄𝐎𝐒</h1>
+    <div id="uploadArea">
+      <input type="file" id="fileInput" multiple />
+      <button id="uploadBtn">Upload</button>
+    </div>
+  </div>
+  <!-- POPUPS -->
+  <div id="addUserPopup" class="popup">
+    <h2>Add User</h2>
+    <input type="text" placeholder="Username" id="newUser" />
+    <input type="password" placeholder="Password" id="newUserPass" /><br/><br/>
+    <button onclick="addUser()">Save</button>
+    <button onclick="hidePopup('addUserPopup')">Cancel</button>
+  </div>
+  <div id="addAdminPopup" class="popup">
+    <h2>Add Admin</h2>
+    <input type="text" placeholder="Username" id="newAdmin" />
+    <input type="password" placeholder="Password" id="newAdminPass" /><br/><br/>
+    <button onclick="addAdmin()">Save</button>
+    <button onclick="hidePopup('addAdminPopup')">Cancel</button>
+  </div>
+  <div id="checkUsersPopup" class="popup">
+    <h2>Users</h2>
+    <div id="userList"></div><br/>
+    <button onclick="hidePopup('checkUsersPopup')">Close</button>
+  </div>
+  <div id="checkAdminsPopup" class="popup">
+    <h2>Admins</h2>
+    <div id="adminList"></div><br/>
+    <button onclick="hidePopup('checkAdminsPopup')">Close</button>
+  </div>
+  <script>
+    let users = [{ username: "123", password: "123" }];
+    let admins = [{ username: "123", password: "123" }];
+    let currentUser = null;
+    let isAdmin = false;
+    function login() {
+      const u = document.getElementById('username').value;
+      const p = document.getElementById('password').value;
+      if (admins.find(a => a.username === u && a.password === p)) {
+        isAdmin = true;
+        currentUser = u;
+        document.getElementById('loginPage').classList.remove('active');
+        document.getElementById('homePage').classList.add('active');
+        document.getElementById('menuBtn').style.display = "block";
+        document.getElementById('menuPopup').style.display = "none";
+      } else if (users.find(a => a.username === u && a.password === p)) {
+        isAdmin = false;
+        currentUser = u;
+        document.getElementById('loginPage').classList.remove('active');
+        document.getElementById('homePage').classList.add('active');
+        document.getElementById('menuBtn').style.display = "block";
+        document.getElementById('menuPopup').innerHTML = `<button onclick="logout()">LOGOUT</button>`;
+      } else {
+        alert("Invalid credentials.");
+      }
+    }
+    function toggleMenu() {
+      const menu = document.getElementById('menuPopup');
+      menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    }
+    function hidePopup(id) {
+      document.getElementById(id).style.display = 'none';
+    }
+    function addUser() {
+      const u = document.getElementById('newUser').value;
+      const p = document.getElementById('newUserPass').value;
+      if (u && p) {
+        users.push({ username: u, password: p });
+        hidePopup('addUserPopup');
+        alert("User added!");
+      }
+    }
+    function addAdmin() {
+      const u = document.getElementById('newAdmin').value;
+      const p = document.getElementById('newAdminPass').value;
+      if (u && p) {
+        admins.push({ username: u, password: p });
+        hidePopup('addAdminPopup');
+        alert("Admin added!");
+      }
+    }
+    function logout() {
+      currentUser = null;
+      isAdmin = false;
+      document.getElementById('loginPage').classList.add('active');
+      document.getElementById('homePage').classList.remove('active');
+      document.getElementById('menuPopup').style.display = "none";
+    }
+    function showPopup(id) {
+      document.getElementById(id).style.display = 'block';
+      if (id === "checkUsersPopup") {
+        const userList = users.map(u => `<div>${u.username} - ${u.password}</div>`).join('');
+        document.getElementById('userList').innerHTML = userList;
+      } else if (id === "checkAdminsPopup") {
+        const adminList = admins.map(u => `<div>${u.username} - ${u.password}</div>`).join('');
+        document.getElementById('adminList').innerHTML = adminList;
+      }
+    }
+  </script>
+</body>
+</html>
